@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "target": "es6",
-    "moduleResolution": "node",
-    "sourceMap": true,
+    "target": "ES2020",
+    "module": "CommonJS",
     "outDir": "dist",
+    "rootDir": "src",
     "strict": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "lib": ["es2015"]
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
 }
