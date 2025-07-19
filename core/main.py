@@ -8,6 +8,7 @@ from src.config.config import settings
 from src.models.projects import Project, Version
 from src.routes.projects import router as projects_router
 from src.routes.uploads import router as uploads_router
+from src.routes.auth import router as auth_router 
 
 load_dotenv()
 app = FastAPI(title="Bernerpace Sandbox API", version="1.0.0")
@@ -20,7 +21,7 @@ async def startup_db():
 
 app.include_router(projects_router)
 app.include_router(uploads_router)
-
+app.include_router(auth_router) 
 
 if __name__ == "__main__":
     print("Starting Bernerpace Sandbox API...")
