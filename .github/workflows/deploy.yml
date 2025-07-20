@@ -64,7 +64,7 @@ jobs:
       run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ./airy-totality-465918-i2-ca296b2fa7a2.json
     - name: Build and Push Docker Image
       run: |
-        docker build -f dockerfile -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }} .
+        docker build -f Dockerfile -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }} .
         docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }}
     - name: Deploy to Cloud Run
       run: |
