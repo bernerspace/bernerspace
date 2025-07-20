@@ -1,19 +1,13 @@
+// src/commands/logout.ts
 import { Command } from "commander";
 import fs from "fs";
-import os from "os";
-import path from "path";
+import { CONFIG_FILE } from "../utils/config";
 
 const logout = new Command("logout")
   .description("Remove saved token and email from config")
   .action(() => {
-    const configDir = path.join(os.homedir(), ".bernerspace");
-    const configFile = path.join(configDir, "config.json");
-    if (fs.existsSync(configFile)) {
-      fs.unlinkSync(configFile);
-      console.log("Logged out; credentials removed.");
-    } else {
-      console.log("No credentials found.");
-    }
+    fs.rmSync(CONFIG_FILE, { force: true });
+    console.log("Logged out; credentials removed.");
   });
 
 export default logout;

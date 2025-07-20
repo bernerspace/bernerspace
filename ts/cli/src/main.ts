@@ -5,8 +5,7 @@ import path from "path";
 import logoutCommand from "./commands/logout";
 import detailsCommand from "./commands/details";
 const program = new Command();
-const envPath = path.join(__dirname, "../.env");
-dotenv.config({ path: envPath });
+dotenv.config();
 program
   .name("bernerspace")
   .description("CLI for Bernerspace project management")
