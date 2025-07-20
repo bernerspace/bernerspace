@@ -14,8 +14,8 @@ async def github_callback(code: str, state: str):
     """
     # Define parameters for the token exchange
     params = {
-        "client_id": settings.GITHUB_CLIENT_ID,
-        "client_secret": settings.GITHUB_CLIENT_SECRET,
+        "client_id": settings.CLIENT_ID,
+        "client_secret": settings.CLIENT_SECRET,
         "code": code
     }
     headers = {"Accept": "application/json"}

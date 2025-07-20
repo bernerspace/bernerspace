@@ -1,7 +1,7 @@
 from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Optional
 
 class Project(Document):
     name: str
@@ -39,7 +39,7 @@ class ProjectResponse(BaseModel):
 
 class UploadResponse(BaseModel):
     project_id: str
-    project_name: str 
+    project_name: Optional[str] = None
     version: int
     success: bool
     filename: str

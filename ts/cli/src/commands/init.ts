@@ -33,10 +33,10 @@ interface ProjectResponse {
 }
 
 const performGitHubLogin = async (): Promise<UserConfig> => {
-  const GITHUB_CLIENT_ID = "Ov23li4Gh7uA8XLb0wry";
+  const CLIENT_ID = "Ov23li4Gh7uA8XLb0wry";
   const state = Math.random().toString(36).substring(7);
   const authUrl =
-    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}` +
+    `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}` +
     `&redirect_uri=http://localhost:8000/callback&scope=user:email&state=${state}`;
 
   console.log("\n🔐 GitHub Authentication Required");

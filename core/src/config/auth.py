@@ -56,3 +56,4 @@ async def get_current_user_email(creds: HTTPAuthorizationCredentials = Depends(b
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during authentication."
         )
+

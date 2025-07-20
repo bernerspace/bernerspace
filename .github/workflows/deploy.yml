@@ -1,0 +1,76 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, developement ]
+  pull_request:
+    branches: [ main, developement ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  python-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r core/requirements.txt
+    - name: Lint with ruff
+      run: |
+        pip install ruff
+        ruff check core/
+
+  typescript-ci:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    - name: Install dependencies and build
+      working-directory: ts/cli
+      run: |
+        npm install
+        npm run build
+        npm run test  # Adjusted to ensure test script exists
+
+  deploy-backend:
+    needs: [python-ci, typescript-ci]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/developement')
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - name: Configure Docker
+      run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+    - name: Create Service Account File
+      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ./airy-totality-465918-i2-ca296b2fa7a2.json
+    - name: Build and Push Docker Image
+      run: |
+        docker build -f dockerfile -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }} .
+        docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }}
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy bernerspace-backend \
+          --image asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bernerspace-backend-repo/bernerspace-backend:${{ github.sha }} \
+          --region asia-south1 \
+          --platform managed \
+          --allow-unauthenticated \
+          --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},DB_NAME=${{ secrets.DB_NAME }},GCP_BUCKET=${{ secrets.GCP_BUCKET }},GOOGLE_APPLICATION_CREDENTIALS=/app/core/airy-totality-465918-i2-ca296b2fa7a2.json,CLIENT_ID=${{ secrets.CLIENT_ID }},CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}"
