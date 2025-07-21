@@ -1,6 +1,6 @@
 # Bernerspace
 
-A streamlined deployment platform that enables developers to quickly deploy applications to the cloud with automatic HTTPS, container building, and infrastructure management.
+**Bernerspace** - A streamlined deployment platform that enables developers to quickly deploy applications to the cloud with automatic HTTPS, container building, and infrastructure management.
 
 ## Overview
 
@@ -129,6 +129,16 @@ graph TB
 ### Installation
 
 #### CLI Installation
+
+```bash
+# Install globally via npm
+npm install @bernerspace/cli -g
+
+# Verify installation
+bernerspace --help
+```
+
+#### CLI Installation (Development)
 
 ```bash
 # Clone the repository
@@ -295,6 +305,14 @@ The project includes GitHub Actions workflows for automatic deployment:
 - **Python CI**: Linting and dependency checks
 - **TypeScript CI**: Building and testing
 - **Cloud Deployment**: Automatic deployment to Google Cloud Run
+
+## Contributors
+
+Thanks to these amazing developers who built Bernerspace:
+
+- [**rangasandbox**](https://github.com/rangasandbox) 
+- [**Jaiaggarwaaaaal**](https://github.com/Jaiaggarwaaaaal)
+- [**sranbir392**](https://github.com/sranbir392)
 
 ## Contributing
 
