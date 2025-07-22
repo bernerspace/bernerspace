@@ -37,7 +37,7 @@ const performGitHubLogin = async (): Promise<UserConfig> => {
   const state = Math.random().toString(36).substring(7);
   const authUrl =
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}` +
-    `&redirect_uri=http://localhost:8000/callback&scope=user:email&state=${state}`;
+    `&redirect_uri=https://bernerspace-backend-584438132152.asia-south1.run.app/callback&scope=user:email&state=${state}`;
 
   console.log("\n🔐 GitHub Authentication Required");
   console.log("Open the following URL in your browser:\n");
