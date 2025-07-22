@@ -9,6 +9,6 @@ class Settings(BaseSettings):
     CLIENT_SECRET: str 
 
     class Config:
-        pass
+        env_file = ".env"
 
 settings = Settings()
