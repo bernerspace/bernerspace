@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from google.cloud import storage
+from google.oauth2 import service_account
+import json
 from beanie import PydanticObjectId
 from ..models.projects import Project, Version, UploadResponse
 from ..config.auth import get_current_user_email
@@ -11,6 +13,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/projects", tags=["uploads"])
+
+def get_gcs_client():
+    """
+    Initializes and returns a Google Cloud Storage client using credentials
+    from the GCP_CREDENTIALS_JSON setting.
+    """
+    if not settings.GCP_CREDENTIALS_JSON:
+        logger.warning("GCP_CREDENTIALS_JSON is not set. GCS client cannot be initialized.")
+        raise HTTPException(status_code=500, detail="GCP credentials not configured.")
+    try:
+        credentials_info = json.loads(settings.GCP_CREDENTIALS_JSON)
+        credentials = service_account.Credentials.from_service_account_info(credentials_info)
+        return storage.Client(credentials=credentials)
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding GCP_CREDENTIALS_JSON: {e}")
+        raise HTTPException(status_code=500, detail="Invalid GCP credentials JSON format.")
+    except Exception as e:
+        logger.error(f"Error initializing GCS client: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to initialize GCS client: {e}")
 
 @router.post("/{project_id}/upload", response_model=UploadResponse)
 async def upload_tar(
@@ -23,7 +44,7 @@ async def upload_tar(
     owner_email: str = Depends(get_current_user_email)
 ):
     logger.info(f"Starting upload for project_id: {project_id}")
-    gcs_client = storage.Client()
+    gcs_client = get_gcs_client()
     try:
         logger.info(f"Attempting to access bucket: {settings.GCP_BUCKET}")
         bucket = gcs_client.bucket(settings.GCP_BUCKET)
@@ -87,7 +108,7 @@ async def download_tar(
     owner_email: str = Depends(get_current_user_email)
 ):
     # Initialize GCS client and bucket
-    gcs_client = storage.Client()
+    gcs_client = get_gcs_client()
     try:
         bucket = gcs_client.bucket(settings.GCP_BUCKET)
     except Exception as e:

@@ -24,7 +24,7 @@ export function packDirectory(projectName: string): string {
     .replace(/\s+/g, "-") // spaces to dashes
     .replace(/[^a-z0-9._-]/g, ""); // remove anything unsafe for filenames
 
-  const name = `${slug}.tar`;
+  const name = `${slug}.tar.gz`;
   const output = path.join(cwd, name);
 
   const excludes: string[] = [];
