@@ -71,4 +71,4 @@ jobs:
           --region asia-south1 \
           --platform managed \
           --allow-unauthenticated \
-          --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},DB_NAME=${{ secrets.DB_NAME }},GCP_BUCKET=${{ secrets.GCP_BUCKET }},GOOGLE_APPLICATION_CREDENTIALS=gs://bspace-1/json/airy-totality-465918-i2-ca296b2fa7a2.json,CLIENT_ID=${{ secrets.CLIENT_ID }},CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}"
+          --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},DB_NAME=${{ secrets.DB_NAME }},GCP_BUCKET=${{ secrets.GCP_BUCKET }},GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }},CLIENT_ID=${{ secrets.CLIENT_ID }},CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}"
