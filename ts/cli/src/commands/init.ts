@@ -33,7 +33,7 @@ interface ProjectResponse {
 }
 
 const performGitHubLogin = async (): Promise<UserConfig> => {
-  const GITHUB_CLIENT_ID = "Ov23li4Gh7uA8XLb0wry";
+  const CLIENT_ID = "Ov23li4Gh7uA8XLb0wry";
   const state = Math.random().toString(36).substring(7);
   const authUrl =
     `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}` +
