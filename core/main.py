@@ -2,7 +2,7 @@ import os
 import uvicorn
 import logging
 import tempfile
-import json # Add this import
+ 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from beanie import init_beanie
