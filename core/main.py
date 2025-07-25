@@ -4,6 +4,7 @@ import logging
 import tempfile
  
 from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -15,7 +16,6 @@ from src.routes.auth import router as auth_router
 from google.cloud import secretmanager # Add this import
 from src.routes.logs import router as logs_router
 
-load_dotenv()
 app = FastAPI(title="Bernerpace Sandbox API", version="1.0.0")
 
 @app.get("/")
@@ -68,7 +68,7 @@ app.include_router(logs_router)
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))
+    port = int(os.getenv("PORT", 8000))
     logger.info(f"Starting Bernerpace Sandbox API on port {port}...")
     try:
         uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
