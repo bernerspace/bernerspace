@@ -14,6 +14,66 @@ import { API_BASE } from "../config/api";
 const execAsync = promisify(exec);
 const prompt = inquirer.createPromptModule();
 
+// --- Log Streaming Function ---
+interface LogEntry {
+  timestamp: string;
+  level: string;
+  message: string;
+}
+
+const streamLogs = async (projectId: string, token: string) => {
+console.log("\n🔄 Starting to stream deployment logs...");
+console.log("----------------------------------------------------");
+
+let lastTimestamp: string | null = null;
+let noLogsCount = 0;
+const POLLING_INTERVAL = 4000; // 4 seconds
+const MAX_NO_LOGS_INTERVALS = 120; // Stop after 15 * 4s = 1 minute of inactivity
+
+const poller = setInterval(async () => {
+  try {
+    const url = new URL(`${API_BASE}/projects/${projectId}/logs`);
+    if (lastTimestamp) {
+      url.searchParams.append("timestamp", lastTimestamp);
+  }
+
+
+    const res = await axios.get<LogEntry[]>(url.toString(), {
+      headers: { Authorization: `Bearer ${token}` },
+      });                                       
+                                                
+    if (res.data.length > 0) {                 
+      noLogsCount = 0; // Reset inactivity counter
+      res.data.forEach((log) => {               
+        console.log(`[${log.level}] ${log.message}`);
+    // Update the last timestamp with the newest one received
+        lastTimestamp = log.timestamp;
+        });
+
+        const lastMessage = res.data[res.data.length - 1].message.toLowerCase();
+        if (lastMessage.includes("successfully processed") || lastMessage.includes("failed")) {
+          console.log("----------------------------------------------------");
+          console.log("✅ Log stream finished." );
+          clearInterval(poller);
+        }
+      } else { 
+        noLogsCount++; 
+      }
+      if (noLogsCount >= MAX_NO_LOGS_INTERVALS) {
+        console.log("\n⏹️  Log stream timed out due to inactivity.");
+        clearInterval(poller);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("\n❌ Error fetching logs:", error.message);
+      } else {
+        console.error("\n❌ An unknown error occurred while fetching logs.");
+      }
+      clearInterval(poller);
+          }
+        }, POLLING_INTERVAL);
+      };
+
 // ────────────────────────────────────────────────────────────
 // GitHub OAuth helper
 // ────────────────────────────────────────────────────────────
@@ -37,7 +97,7 @@ const performGitHubLogin = async (): Promise<UserConfig> => {
   const state = Math.random().toString(36).substring(7);
   const authUrl =
     `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}` +
-    `&redirect_uri=http://localhost:8000/callback&scope=user:email&state=${state}`;
+    `&redirect_uri=https://bernerspace-backend-584438132152.asia-south1.run.app/callback&scope=user:email&state=${state}`;
 
   console.log("\n🔐 GitHub Authentication Required");
   console.log("Open the following URL in your browser:\n");
@@ -201,6 +261,7 @@ const init = new Command("init")
 
     // 5) Package & upload
     const tarPath = packDirectory(projectName); // projectName.tar
+    console.log("📦 Project files packaged. Uploading and deploying... This may take a moment.");
     const form = new FormData();
     form.append("file", fs.createReadStream(tarPath));
     form.append("current_path", current_path);
@@ -217,6 +278,9 @@ const init = new Command("init")
 
     console.log("\n✅ Upload successful!");
     fs.unlinkSync(tarPath); // cleanup
+
+    // 6) STREAM LOGS FROM THE BACKEND  <-- THIS IS THE NEW PART
+    await streamLogs(projectId, userConfig.token);
     console.log("\n💡 To log out, run: `bernitespace logout`");
   });
 
