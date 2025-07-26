@@ -2,8 +2,7 @@ import os
 import uvicorn
 import logging
 import tempfile
-from dotenv import load_dotenv
-load_dotenv()
+
 from fastapi import FastAPI
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -15,7 +14,8 @@ from src.routes.auth import router as auth_router
 from google.cloud import secretmanager # Add this import
 from src.routes.logs import router as logs_router
 
-
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
