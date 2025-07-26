@@ -28,7 +28,7 @@ console.log("----------------------------------------------------");
 let lastTimestamp: string | null = null;
 let noLogsCount = 0;
 const POLLING_INTERVAL = 4000; // 4 seconds
-const MAX_NO_LOGS_INTERVALS = 15; // Stop after 15 * 4s = 1 minute of inactivity
+const MAX_NO_LOGS_INTERVALS = 120; // Stop after 15 * 4s = 1 minute of inactivity
 
 const poller = setInterval(async () => {
   try {

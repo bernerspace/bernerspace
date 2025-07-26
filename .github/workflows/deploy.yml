@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main,  developement ]
+    branches: [ main,  deploy ]
   pull_request:
-    branches: [ main,  developement ]
+    branches: [ main,  deploy ]
 
 permissions:
   contents: read
@@ -71,4 +71,4 @@ jobs:
           --region asia-south1 \
           --platform managed \
           --allow-unauthenticated \
-          --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},DB_NAME=${{ secrets.DB_NAME }},GCP_BUCKET=${{ secrets.GCP_BUCKET }},GCP_SECRET_NAME=${{ secrets.GCP_SECRET_NAME }},CLIENT_ID=${{ secrets.CLIENT_ID }},CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}"
+          --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},DB_NAME=${{ secrets.DB_NAME }},GCP_BUCKET=${{ secrets.GCP_BUCKET }},GCP_SECRET_NAME=${{ secrets.GCP_SECRET_NAME }},CLIENT_ID=${{ secrets.CLIENT_ID }},CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}, GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}""

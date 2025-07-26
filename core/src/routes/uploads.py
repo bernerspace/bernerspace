@@ -48,7 +48,8 @@ async def upload_tar(
     version = count + 1
 
     # Upload to GCS
-    filename = f"{proj.name}/v{version}/{file.filename}"
+    filename = f"{proj.name}/{project_id}/v{version}/{file.filename}"
+    # filename = f"{project_id}/{proj.name}/v{version}/{file.filename}"
     blob = bucket.blob(filename)
     content = await file.read()
     blob.upload_from_string(content)

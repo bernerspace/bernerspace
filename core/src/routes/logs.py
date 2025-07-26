@@ -8,11 +8,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 import iso8601
 
-# Configure logger for this module
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/projects", tags=["logs"])
 
-# Pydantic model for the response
 class LogEntry(BaseModel):
     timestamp: str
     level: str
@@ -60,7 +58,7 @@ async def get_project_logs(
 
     try:
         entries = client.list_entries(
-            project_ids=[gcp_project_id],
+            resource_names=[f"projects/{gcp_project_id}"],
             filter_=final_filter,
             order_by="timestamp"
         )
@@ -79,7 +77,6 @@ async def get_project_logs(
         return response_logs
 
     except Exception as e:
-        # THIS IS THE IMPORTANT CHANGE - IT WILL PRINT THE FULL ERROR
         logger.exception("An error occurred while fetching logs from Google Cloud Logging: %s", e)
         raise HTTPException(
             status_code=500,
