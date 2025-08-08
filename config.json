@@ -1,0 +1,10 @@
+{
+    "slack":{
+        "permission": "chat:write,channels:read,groups:read,im:read,mpim:read",
+        "env":[
+            "SLACK_CLIENT_ID",
+            "SLACK_CLIENT_SECRET",
+            "SLACK_REDIRECT_URI"
+        ]
+    }
+}

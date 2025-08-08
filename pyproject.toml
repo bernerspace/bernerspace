@@ -1,0 +1,18 @@
+[project]
+name = "bernerspace-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.12.15",
+    "fastmcp>=2.11.2",
+    "itsdangerous>=2.2.0",
+    "pyjwt>=2.10.1",
+    "python-dotenv>=1.1.1",
+    "slack-sdk>=3.36.0",
+    "sqlalchemy>=2.0.34",
+    "alembic>=1.13.2",
+    "psycopg[binary]>=3.2.1",
+    "psycopg2>=2.9.10",
+]
