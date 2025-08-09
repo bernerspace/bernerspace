@@ -1,4 +1,7 @@
+
 # Slack MCP Tools Reference
+
+Bernerspace MCP supports over 47 Slack tools for authentication, messaging, channels, users, files, reactions, history, pins, bookmarks, usergroups, team info, emoji, and do-not-disturb features. Below is a comprehensive reference for all available endpoints and capabilities.
 
 ## Authentication & Testing
 

@@ -23,11 +23,11 @@ Integrating third‑party services into agentic systems is painful today:
 
 1. Configure
    - Set up `CONFIG.json` with your service permissions.
-1. Deploy
+2. Deploy
    - Self-host the unified MCP API platform.
-1. Authenticate
+3. Authenticate
    - OAuth middleware handles all service authentications.
-1. Integrate
+4. Integrate
    - Use a single endpoint for all your AI agent integrations.
 
 ## Current Status
@@ -46,7 +46,7 @@ JWT_SECRET=your-jwt-signing-secret
 DATABASE_URL=postgresql://localhost:5432/mcp_server
 CLIENT_ID=<slack_client_id>
 CLIENT_SECRET=<slack_client_secret>
-SLACK_REDIRECT_URI=http://localhost:8000/slack/oauth/callback
+SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
 ```
 
 1. Install dependencies (choose one)
@@ -60,18 +60,25 @@ SLACK_REDIRECT_URI=http://localhost:8000/slack/oauth/callback
 
 1. Run the server
 
-- python server.py
-- Server will listen on <http://localhost:8000>
+- Using Python
+  - python server.py
+  - Server will listen on <http://localhost:8000>
+- Using Docker
+  - docker build -t bernerspace-mcp .
+  - docker run --env-file .env -p 8000:8000 bernerspace-mcp
+  - Server will listen on <http://localhost:8000>
+- Using Docker Compose
+  - docker compose up -d
 
 1. Create a JWT to call the MCP server
 
 - python generate_jwt.py --user-id <your_user_id>
-- Use the printed token as: Authorization: Bearer `TOKEN`
+- Use the printed token as: Authorization: Bearer TOKEN
 
 ## OAuth Flow (Slack)
 
-- GET / returns `oauth_url` and instructions to authorize the workspace.
-- Slack redirects to `SLACK_REDIRECT_URI` (defaults to `/slack/oauth/callback`).
+- GET /mcp/slack returns `oauth_url` and instructions to authorize the workspace.
+- Slack redirects to `SLACK_REDIRECT_URI` (defaults to `/mcp/slack/oauth/callback`).
 - The server exchanges the code, enriches the token details, and persists it in Postgres.
 - Tokens are stored in table `oauth_tokens` with composite key `(client_id, integration_type)` where `client_id` = your JWT subject (`sub`).
 
@@ -89,6 +96,8 @@ SLACK_REDIRECT_URI=http://localhost:8000/slack/oauth/callback
 - get_oauth_url() – returns the provider OAuth URL for the current JWT subject.
 - check_oauth_status() – reports whether an OAuth token exists for the JWT subject.
 
+For a full list and detailed documentation of all 47+ Slack MCP tools, see docs/slack/tools.md.
+
 ## MCP Client Configuration
 
 Example client entry (mcp.json):
@@ -97,7 +106,7 @@ Example client entry (mcp.json):
 {
   "servers": {
     "slack": {
-      "url": "http://localhost:8000/mcp",
+      "url": "http://localhost:8000/mcp/slack",
       "type": "http",
       "headers": {
         "Authorization": "Bearer YOUR_JWT"
@@ -115,16 +124,16 @@ Use this `mcp.json` in your VS Code user settings (replace `JWT` with your gener
 
 ```json
 {
-    "servers": {
-        "slack": {
-            "url": "http://localhost:8000/mcp",
-            "type": "http",
-              "headers": {
-                "Authorization": "Bearer JWT"
-        }
-        }
-    },
-    "inputs": []
+  "servers": {
+    "slack": {
+      "url": "http://localhost:8000/mcp/slack",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer JWT"
+      }
+    }
+  },
+  "inputs": []
 }
 ```
 
@@ -138,7 +147,7 @@ client = MultiServerMCPClient(
     {
         "slack": {
             "transport": "streamable_http",
-            "url": "http://localhost:8000/mcp",
+            "url": "http://localhost:8000/mcp/slack",
             "headers": {
                 "Authorization": "Bearer YOUR_TOKEN"
             },
@@ -170,10 +179,19 @@ Provide a single `CONFIG.json` to declare scopes and required env for each servi
 
 ## Endpoints
 
-- GET / – service info + OAuth URL (Slack)
 - GET /health – health/status
-- GET /slack/oauth/callback – OAuth callback that persists tokens and associates them with the JWT subject
-- MCP tools served at /mcp via FastMCP
+- GET /mcp/slack – service info + OAuth URL (Slack)
+- GET /mcp/slack/oauth/callback – OAuth callback that persists tokens and associates them with the JWT subject
+- MCP Slack server served at /mcp/slack via FastMCP
+
+## Docker
+
+You can run Bernerspace MCP in Docker:
+
+```bash
+docker build -t bernerspace-mcp .
+docker run --env-file .env -p 8000:8000 bernerspace-mcp
+```
 
 ## Roadmap
 
