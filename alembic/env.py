@@ -16,7 +16,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from src.utils.database import Base  # noqa: E402
+from src.models.oauth_token import Base  # noqa: E402
 
 target_metadata = Base.metadata
 
