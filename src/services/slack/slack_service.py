@@ -17,7 +17,6 @@ from src.services.slack.schemas.slack import SlackResponse
 from fastmcp import Context
 from src.core.storeage_manager import TokenStorageManager
 from src.middleware.auth import extract_user_from_context
-from src.core.storeage_manager import TokenStorageManager
 from fastmcp.server.dependencies import get_context
 
 storageManager = TokenStorageManager()
