@@ -47,8 +47,6 @@ DATABASE_URL=postgresql://localhost:5432/mcp_server
 CLIENT_ID=<slack_client_id>
 CLIENT_SECRET=<slack_client_secret>
 SLACK_REDIRECT_URI=http://localhost:8000/slack/oauth/callback
-# Optional
-CHANNEL_ID=<default_channel_id>
 ```
 
 1. Install dependencies (choose one)
