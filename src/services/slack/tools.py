@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from starlette.responses import JSONResponse
 from src.middleware.auth import JWTAuthMiddleware, extract_user_from_context
 from src.core.storeage_manager import TokenStorageManager
-from services.slack.slack_service import SlackBotAPIService
+from src.services.slack.slack_service import SlackBotAPIService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
