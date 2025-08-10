@@ -4,7 +4,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/bernerspace/bernerspace?style=social)](https://github.com/bernerspace/bernerspace/stargazers)
 [![Issues](https://img.shields.io/github/issues/bernerspace/bernerspace)](https://github.com/bernerspace/bernerspace/issues)
-[![License](https://img.shields.io/github/license/bernerspace/bernerspace)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-view%20on%20Notion-blue)](https://www.notion.so/sumitsandbox/Bernerspace-quick-start-24be21126afc80d3b765dd75556e6e50)
 [![Contact](https://img.shields.io/badge/contact-email-yellow)](mailto:sumit@example.com)
 
@@ -224,3 +224,7 @@ We welcome contributions of all kinds — whether it’s fixing a bug, suggestin
 - 🐦 Follow & DM on Twitter (X): [@SumitSandbox](https://x.com/SumitSandbox)  
 
 Whether you’re a first-time contributor or an experienced developer, we’d love to hear from you and collaborate!
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
