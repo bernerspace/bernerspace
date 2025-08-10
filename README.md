@@ -1,14 +1,36 @@
-# Bernerspace
+# Bernerspace  
 
-Unified, OAuth-enabled gateway for MCP tools. One server, one JWT, many integrations.
+### One MCP server · All your integrations · Zero hassle
+
+[![GitHub stars](https://img.shields.io/github/stars/bernerspace/bernerspace?style=social)](https://github.com/bernerspace/bernerspace/stargazers)
+[![Issues](https://img.shields.io/github/issues/bernerspace/bernerspace)](https://github.com/bernerspace/bernerspace/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-view%20on%20Notion-blue)](https://www.notion.so/sumitsandbox/Bernerspace-quick-start-24be21126afc80d3b765dd75556e6e50)
+[![Contact](https://img.shields.io/badge/contact-email-yellow)](mailto:sumit@example.com)
+
+<p align="center">
+  <img src="assets/banner.jpg" alt="Bernerspace Banner" width="800">
+</p>
+
+<p align="center">
+  🚀 <b>Unified MCP server for all OAuth-enabled integrations</b><br>
+  <i>One server · One JWT · Many tools</i>
+</p>
+
+<p align="center">
+  ✅ <b>Current Live Integration:</b> Slack — <b>47 tools</b> tested & available <br>
+  🔜 <b>Coming Soon:</b> Gmail · Google Calendar · Notion <br>
+  🎯 <b>Goal:</b> 100+ integrations
+</p>
+
 
 ## Why
 
-Integrating third‑party services into agentic systems is painful today:
+Using or integrating MCP servers today is painful because:
 
 - Most MCP servers lack OAuth capabilities, limiting user experience.
 - Every MCP server requires separate deployment and management, increasing operational overhead.
-- Each MCP server has different authentication layers, making unified integration nearly impossible.
+- Integration chaos: different authentication layers across MCP servers make unified integration nearly impossible.
 
 ## What You Get
 
@@ -19,21 +41,27 @@ Integrating third‑party services into agentic systems is painful today:
   - <http://localhost:8000/mcp/slack>
   - <http://localhost:8000/mcp/gmail> (coming soon)
 
-## How it works
-
-1. Configure
-   - Set up `CONFIG.json` with your service permissions.
-2. Deploy
-   - Self-host the unified MCP API platform.
-3. Authenticate
-   - OAuth middleware handles all service authentications.
-4. Integrate
-   - Use a single endpoint for all your AI agent integrations.
 
 ## Current Status
 
-- Live integration: Slack
-- Product name: Bernerspace
+- Current live integration: **Slack** with 47 fully tested tools available.  
+  → Learn more about Slack tools: [docs/slack/tools.md](docs/slack/tools.md)  
+- Coming soon: **Gmail**, **Google Calendar**, and **Notion**.
+
+## 📖 Documentation
+
+All setup instructions, integration guides, and examples are available on our Notion docs:  
+
+🔗 **[Bernerspace Quick Start Docs](https://www.notion.so/sumitsandbox/Bernerspace-quick-start-24be21126afc80d3b765dd75556e6e50)**
+
+The docs are updated regularly with:
+
+- Quick start guides for new integrations
+- Step-by-step installation instructions
+- Usage examples for each tool
+- Roadmap and contribution guidelines
+
+
 
 ## Quickstart
 
@@ -52,7 +80,7 @@ SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
 1. Install dependencies (choose one)
 
 - Using pip
-  - python -m venv .venv && source .venv/bin/activate
+  - python3 -m venv .venv && source .venv/bin/activate
   - pip install -e .
 - Using uv
   - uv venv && source .venv/bin/activate
@@ -88,15 +116,6 @@ SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
 - Table: `oauth_tokens(client_id, integration_type, token_json, stored_at)`.
 - Configure Postgres via `DATABASE_URL`.
 
-## Available Tools (Slack)
-
-- send_slack_message(channel, text, blocks?, attachments?, thread_ts?, username?, icon_emoji?, icon_url?)
-  - Returns success metadata or an OAuth URL payload when authorization is required.
-- update_slack_message(channel, message_ts, text?, blocks?, attachments?)
-- get_oauth_url() – returns the provider OAuth URL for the current JWT subject.
-- check_oauth_status() – reports whether an OAuth token exists for the JWT subject.
-
-For a full list and detailed documentation of all 47+ Slack MCP tools, see docs/slack/tools.md.
 
 ## MCP Client Configuration
 
@@ -157,32 +176,8 @@ client = MultiServerMCPClient(
 
 tools = await client.get_tools()
 agent = create_react_agent("openai:gpt-4.1", tools)
-response = await agent.ainvoke({"messages": "what is the weather in nyc?"})
+response = await agent.ainvoke({"messages": "Can you send hello message to my #general groups?"})
 ```
-
-## Unified Service Configuration
-
-Provide a single `CONFIG.json` to declare scopes and required env for each service (concept):
-
-```json
-{
-  "slack": {
-    "permission": "chat:write,channels:read,groups:read,im:read,mpim:read",
-    "env": [
-      "CLIENT_ID",
-      "CLIENT_SECRET",
-      "SLACK_REDIRECT_URI"
-    ]
-  }
-}
-```
-
-## Endpoints
-
-- GET /health – health/status
-- GET /mcp/slack – service info + OAuth URL (Slack)
-- GET /mcp/slack/oauth/callback – OAuth callback that persists tokens and associates them with the JWT subject
-- MCP Slack server served at /mcp/slack via FastMCP
 
 ## Docker
 
@@ -193,15 +188,43 @@ docker build -t bernerspace-mcp .
 docker run --env-file .env -p 8000:8000 bernerspace-mcp
 ```
 
-## Roadmap
+## 🚀 Roadmap
 
-- Gmail, Google Drive, GitHub and more providers
-- Centralized policy enforcement (scopes/roles per JWT)
-- Admin UI for managing connections and tokens
+We’re just getting started. Our goal is to support **100+ integrations** so you can connect any third-party service to your MCP server with ease.
 
-## Notes
+### Coming Soon
 
-- Keep your `.env` secrets secure; never commit them.
-- The server validates JWT `iss` and `aud`. Defaults: issuer `bernerspace-ecosystem`, audience `mcp-slack-server`.
+- 📧 Gmail  
+- 📅 Google Calendar  
+- 📂 Google Drive  
+- 🗂️ Notion  
+- 💻 GitHub  
+- 💬 Discord  
+- 📊 Airtable  
+- 🔍 ElasticSearch  
+- 📝 Confluence  
 
-— Bernerspace
+…and dozens more on the way.
+
+
+## 🤝 Contributing
+
+We welcome contributions of all kinds — whether it’s fixing a bug, suggesting a feature, improving documentation, or just sharing feedback.
+
+### Ways to Contribute
+
+- ⭐ **Star the repo** to show your support and help others discover Bernerspace.  
+- 🐛 [Report a bug](https://github.com/bernerspace/bernerspace/issues/new/choose) so we can fix it quickly.  
+- 💡 [Request a feature](https://github.com/bernerspace/bernerspace/issues/new/choose) or suggest an improvement.  
+- 🛠️ Submit a Pull Request with code changes, docs updates, or tests.  
+
+### Stay in Touch
+
+- 📧 Email me at [ranga.sumit1999@gmail.com](mailto:ranga.sumit1999@gmail.com)  
+- 🐦 Follow & DM on Twitter (X): [@SumitSandbox](https://x.com/SumitSandbox)  
+
+Whether you’re a first-time contributor or an experienced developer, we’d love to hear from you and collaborate!
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
