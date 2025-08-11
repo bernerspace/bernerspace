@@ -8,21 +8,19 @@ from typing import List, Optional, Dict, Any, Union
 from pydantic import Field
 from datetime import datetime, timezone
 from typing_extensions import Annotated
-from dotenv import load_dotenv
 from starlette.responses import JSONResponse
 from src.middleware.auth import JWTAuthMiddleware, extract_user_from_context
 from src.core.storeage_manager import TokenStorageManager
-from src.services.slack.slack_service import SlackBotAPIService
+from services.slack.service import SlackBotAPIService
+from src.utils.env_handler import JWT_SECRET as ENV_JWT_SECRET, SLACK_CLIENT_ID as ENV_SLACK_CLIENT_ID, SLACK_REDIRECT_URI as ENV_SLACK_REDIRECT_URI, SLACK_CLIENT_SECRET as ENV_SLACK_CLIENT_SECRET
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-
-jwt_secret = os.getenv("JWT_SECRET")
-slack_client_id = os.getenv("CLIENT_ID")
-slack_client_secret = os.getenv("CLIENT_SECRET")
-slack_redirect_uri = os.getenv("SLACK_REDIRECT_URI")
+jwt_secret = ENV_JWT_SECRET
+slack_client_id = ENV_SLACK_CLIENT_ID
+slack_client_secret = ENV_SLACK_CLIENT_SECRET
+slack_redirect_uri = ENV_SLACK_REDIRECT_URI
 
 # File to store OAuth tokens locally
 OAUTH_TOKENS_FILE = "oauth_tokens.json"
@@ -1352,5 +1350,3 @@ async def get_slack_dnd_team_info(
         await ctx.error(f"Failed to get team DND info: {result.error}")
         return {"success": False, "error": result.error}
 
-if __name__ == "__main__":
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
