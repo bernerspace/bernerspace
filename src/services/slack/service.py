@@ -18,6 +18,8 @@ from fastmcp import Context
 from src.core.storeage_manager import TokenStorageManager
 from src.middleware.auth import extract_user_from_context
 from fastmcp.server.dependencies import get_context
+from src.utils.env_handler import SLACK_REDIRECT_URI as ENV_SLACK_REDIRECT_URI, SLACK_CLIENT_ID as ENV_SLACK_CLIENT_ID
+from src.utils.config_handler import load_config
 
 storageManager = TokenStorageManager()
 logger = logging.getLogger(__name__)
@@ -28,7 +30,6 @@ class SlackBotAPIService:
     async def from_context(cls, ctx: Context):
         storageManager = TokenStorageManager()
         jwt_client_id = extract_user_from_context(ctx)
-        print("jwt_client_id", jwt_client_id)
 
         # If there is no client id (JWT missing), instruct to add JWT token
         if not jwt_client_id:
@@ -41,7 +42,6 @@ class SlackBotAPIService:
 
         token_data = storageManager.read_token(jwt_client_id)
         access_token = token_data.get("access_token") if token_data else None
-        print("access_token", access_token)
         
         if not access_token:
             await ctx.info("No valid Slack OAuth token found. Generating OAuth URL for authorization.")
@@ -55,13 +55,14 @@ class SlackBotAPIService:
 
     @classmethod
     async def get_oauth_url(cls):
-        slack_redirect_uri = os.getenv("SLACK_REDIRECT_URI")
-        slack_client_id = os.getenv("CLIENT_ID")
+        config = load_config().get("slack", {})
+        slack_redirect_uri = ENV_SLACK_REDIRECT_URI
+        slack_client_id = ENV_SLACK_CLIENT_ID
         ctx = get_context()
         jwt_payload = ctx.get_state("jwt_payload") if ctx else None
         jwt_client_id = jwt_payload.get('sub') if jwt_payload else ""
         await ctx.info("Generating OAuth URL")
-        scopes = ["chat:write", "channels:read", "groups:read", "im:read", "mpim:read"]
+        scopes = config.get("scopes", [])
         scope_string = ",".join(scopes)
         oauth_url = (
             f"https://slack.com/oauth/v2/authorize?"
