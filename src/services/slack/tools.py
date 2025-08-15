@@ -12,12 +12,12 @@ from starlette.responses import JSONResponse
 from src.middleware.auth import JWTAuthMiddleware, extract_user_from_context
 from src.core.storeage_manager import TokenStorageManager
 from services.slack.service import SlackBotAPIService
-from src.utils.env_handler import JWT_SECRET as ENV_JWT_SECRET, SLACK_CLIENT_ID as ENV_SLACK_CLIENT_ID, SLACK_REDIRECT_URI as ENV_SLACK_REDIRECT_URI, SLACK_CLIENT_SECRET as ENV_SLACK_CLIENT_SECRET
+from src.utils.env_handler import SLACK_CLIENT_ID as ENV_SLACK_CLIENT_ID, SLACK_REDIRECT_URI as ENV_SLACK_REDIRECT_URI, SLACK_CLIENT_SECRET as ENV_SLACK_CLIENT_SECRET
+from src.utils.env_handler import JWT_ISSUER as ENV_JWT_ISSUER, JWT_AUDIENCE as ENV_JWT_AUDIENCE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-jwt_secret = ENV_JWT_SECRET
 slack_client_id = ENV_SLACK_CLIENT_ID
 slack_client_secret = ENV_SLACK_CLIENT_SECRET
 slack_redirect_uri = ENV_SLACK_REDIRECT_URI
@@ -30,9 +30,8 @@ mcp = FastMCP("Slack Bot MCP Server")
 storageManager=TokenStorageManager()
 
 mcp.add_middleware(JWTAuthMiddleware(
-        secret_key=jwt_secret,
-        issuer="bernerspace-ecosystem",
-        audience="mcp-slack-server"
+        issuer=ENV_JWT_ISSUER,
+        audience=ENV_JWT_AUDIENCE
     ))
 
 # ==================== HELPER FUNCTION ====================
