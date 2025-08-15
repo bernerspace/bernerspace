@@ -21,3 +21,8 @@ def has_integration(name: str) -> bool:
 
 def is_slack_enabled() -> bool:
     return has_integration("slack")
+
+
+def is_google_enabled() -> bool:
+    return has_integration("google")
+

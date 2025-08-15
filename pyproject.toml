@@ -14,5 +14,8 @@ dependencies = [
     "sqlalchemy>=2.0.34",
     "alembic>=1.13.2",
     "psycopg[binary]>=3.2.1",
-    "psycopg2>=2.9.10",
+    "psycopg2-binary>=2.9.10",
+    "google-api-python-client>=2.142.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.1",
 ]

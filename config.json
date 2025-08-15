@@ -1,5 +1,17 @@
 {
-    "slack":{
-        "scopes": ["chat:write", "channels:read", "groups:read", "im:read", "mpim:read"]
+    "slack": {
+        "scopes": [
+            "chat:write",
+            "channels:read",
+            "groups:read",
+            "im:read",
+            "mpim:read"
+        ]
+    },
+    "google": {
+        "scopes": [
+            "https://www.googleapis.com/auth/gmail.modify",
+            "https://www.googleapis.com/auth/calendar.events"
+        ]
     }
 }

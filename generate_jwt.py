@@ -73,13 +73,14 @@ def generate_jwt_token(
     token = jwt.encode(payload, secret, algorithm="HS256")
     return token
 
-def verify_jwt_token(token: str, secret: str = None) -> dict:
+def verify_jwt_token(token: str, secret: str = None, audience: str = "mcp-slack-server") -> dict:
     """
     Verify and decode a JWT token.
     
     Args:
         token: JWT token string to verify
         secret: JWT signing secret (uses JWT_SECRET env var if not provided)
+        audience: Expected token audience (default: "mcp-slack-server")
     
     Returns:
         Decoded token payload
@@ -98,7 +99,7 @@ def verify_jwt_token(token: str, secret: str = None) -> dict:
             secret,
             algorithms=["HS256"],
             issuer="bernerspace-ecosystem",
-            audience="mcp-slack-server"
+            audience=audience
         )
         return payload
     except jwt.ExpiredSignatureError:
@@ -227,7 +228,7 @@ Token Validity:
     try:
         if args.verify:
             # Verify token
-            payload = verify_jwt_token(args.verify, args.secret)
+            payload = verify_jwt_token(args.verify, args.secret, audience=args.audience)
             
             if args.json:
                 print(json.dumps(payload, indent=2, default=str))
@@ -252,7 +253,7 @@ Token Validity:
                 print(token)
             elif args.json:
                 # Decode token for JSON output
-                payload = verify_jwt_token(token, args.secret)
+                payload = verify_jwt_token(token, args.secret, audience=args.audience)
                 result = {
                     "token": token,
                     "payload": payload
@@ -265,7 +266,7 @@ Token Validity:
                 print("=" * 50)
                 
                 # Show token info
-                payload = verify_jwt_token(token, args.secret)
+                payload = verify_jwt_token(token, args.secret, audience=args.audience)
                 print(format_token_info(payload))
                 
                 print("\n📋 Usage Examples:")
