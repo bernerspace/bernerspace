@@ -9,6 +9,8 @@ from sqlalchemy.exc import SQLAlchemyError
 import json
 from src.utils.database import SessionLocal
 from src.models.oauth_token import Base, OAuthToken
+from src.utils.env_handler import TOKEN_ENCRYPTION_KEYS
+from src.utils.crypto import encrypt_text, decrypt_text
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,14 @@ class TokenStorageManager:
 
                 now = datetime.now(timezone.utc)
                 token_json = json.dumps(token_data)
+
+                # Encrypt if keys configured
+                if TOKEN_ENCRYPTION_KEYS:
+                    try:
+                        token_json = encrypt_text(token_json, TOKEN_ENCRYPTION_KEYS)
+                    except Exception:
+                        logger.exception("Failed to encrypt oauth token; aborting write")
+                        raise
 
                 if existing:
                     existing.token_json = token_json
@@ -65,9 +75,20 @@ class TokenStorageManager:
                 if not row:
                     logger.debug(f"No token found for client: {client_id} ({integration_type})")
                     return None
+                raw = row.token_json
+                data_str, was_encrypted = decrypt_text(raw, TOKEN_ENCRYPTION_KEYS)
+                if was_encrypted:
+                    if data_str is None:
+                        # Encrypted but cannot decrypt
+                        logger.error("Token present but cannot decrypt (check keys/rotation)")
+                        return None
+                else:
+                    # plaintext legacy row; keep as-is
+                    data_str = raw
                 try:
-                    data = json.loads(row.token_json)
+                    data = json.loads(data_str) if data_str else None
                 except Exception:
+                    logger.exception("Failed to parse token_json as JSON")
                     data = None
                 return data
         except SQLAlchemyError as e:
