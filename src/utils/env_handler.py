@@ -39,3 +39,7 @@ if is_slack_enabled():
     SLACK_CLIENT_SECRET: str = _require("SLACK_CLIENT_SECRET")
     SLACK_REDIRECT_URI: str = _require("SLACK_REDIRECT_URI")
 
+# Encryption keys for token column (comma-separated MultiFernet keys)
+TOKEN_ENCRYPTION_KEYS_RAW: Optional[str] = _optional("TOKEN_ENCRYPTION_KEYS")
+TOKEN_ENCRYPTION_KEYS = [k.strip() for k in TOKEN_ENCRYPTION_KEYS_RAW.split(",")] if TOKEN_ENCRYPTION_KEYS_RAW else []
+
