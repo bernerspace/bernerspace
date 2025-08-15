@@ -1,6 +1,14 @@
 import os
 from logging.config import fileConfig
 
+import sys
+from pathlib import Path
+
+# Add the project root to sys.path
+# Assumes alembic/env.py is at <project_root>/alembic/env.py
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
