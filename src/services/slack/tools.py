@@ -11,7 +11,7 @@ from typing_extensions import Annotated
 from starlette.responses import JSONResponse
 from src.middleware.auth import JWTAuthMiddleware, extract_user_from_context
 from src.core.storeage_manager import TokenStorageManager
-from services.slack.service import SlackBotAPIService
+from src.services.slack.service import SlackBotAPIService
 from src.utils.env_handler import SLACK_CLIENT_ID as ENV_SLACK_CLIENT_ID, SLACK_REDIRECT_URI as ENV_SLACK_REDIRECT_URI, SLACK_CLIENT_SECRET as ENV_SLACK_CLIENT_SECRET
 from src.utils.env_handler import JWT_ISSUER as ENV_JWT_ISSUER, JWT_AUDIENCE as ENV_JWT_AUDIENCE
 
@@ -21,9 +21,6 @@ logger = logging.getLogger(__name__)
 slack_client_id = ENV_SLACK_CLIENT_ID
 slack_client_secret = ENV_SLACK_CLIENT_SECRET
 slack_redirect_uri = ENV_SLACK_REDIRECT_URI
-
-# File to store OAuth tokens locally
-OAUTH_TOKENS_FILE = "oauth_tokens.json"
 
 # Create MCP instance WITHOUT built-in auth
 mcp = FastMCP("Slack Bot MCP Server")

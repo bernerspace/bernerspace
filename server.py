@@ -13,7 +13,6 @@ storageManager = TokenStorageManager()
 # Create the main server
 mcp = FastMCP(name="MainServer")
 
-
 # Mount the Slack MCP server with the "slack" prefix AND the OAuth routes only if Slack is enabled in config
 if is_slack_enabled():
     mcp.mount(slack_mcp, prefix="slack")
