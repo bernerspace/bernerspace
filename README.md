@@ -34,12 +34,12 @@ Using or integrating MCP servers today is painful because:
 
 ## What You Get
 
-- Single JWT across services via middleware (HS256, issuer/audience validated).
+- Single JWT across services via middleware (HS256 or RS256 via JWKS; issuer/audience validated).
 - OAuth middleware per integration (Slack live; more coming) with DB‑backed token storage.
 - Consistent MCP tools interface for each service.
 - Unified endpoints you can self‑host, e.g.:
-  - <http://localhost:8000/mcp/slack>
-  - <http://localhost:8000/mcp/gmail> (coming soon)
+  - <http://localhost:8000/slack>
+  - <http://localhost:8000/gmail> (coming soon)
 
 
 ## Current Status
@@ -67,14 +67,27 @@ The docs are updated regularly with:
 
 1. Environment
 
-Create a `.env` with the following variables:
+Create a `.env` (see `.env.example`) with the following variables:
 
 ```bash
-JWT_SECRET=your-jwt-signing-secret
+# Database
 DATABASE_URL=postgresql://localhost:5432/mcp_server
-CLIENT_ID=<slack_client_id>
-CLIENT_SECRET=<slack_client_secret>
-SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
+
+# Auth (choose one)
+# Option A: HS256
+JWT_SECRET=your-jwt-signing-secret
+# Option B: RS256 via JWKS
+# JWT_JWKS_URL=https://your-auth-domain/.well-known/jwks.json
+# JWT_ISSUER=https://your-auth-domain/
+# JWT_AUDIENCE=my-api
+
+# Slack OAuth
+SLACK_CLIENT_ID=<slack_client_id>
+SLACK_CLIENT_SECRET=<slack_client_secret>
+SLACK_REDIRECT_URI=http://localhost:8000/slack/oauth/callback
+
+# Optional: encrypt tokens at rest (comma-separated MultiFernet keys)
+# TOKEN_ENCRYPTION_KEYS=
 ```
 
 1. Install dependencies (choose one)
@@ -105,8 +118,8 @@ SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
 
 ## OAuth Flow (Slack)
 
-- GET /mcp/slack returns `oauth_url` and instructions to authorize the workspace.
-- Slack redirects to `SLACK_REDIRECT_URI` (defaults to `/mcp/slack/oauth/callback`).
+- GET /slack returns `oauth_url` and instructions to authorize the workspace.
+- Slack redirects to `SLACK_REDIRECT_URI` (defaults to `/slack/oauth/callback`).
 - The server exchanges the code, enriches the token details, and persists it in Postgres.
 - Tokens are stored in table `oauth_tokens` with composite key `(client_id, integration_type)` where `client_id` = your JWT subject (`sub`).
 
@@ -115,6 +128,7 @@ SLACK_REDIRECT_URI=http://localhost:8000/mcp/slack/oauth/callback
 - Schema managed with Alembic (migrations included).
 - Table: `oauth_tokens(client_id, integration_type, token_json, stored_at)`.
 - Configure Postgres via `DATABASE_URL`.
+- Tokens can be encrypted at rest when `TOKEN_ENCRYPTION_KEYS` is set.
 
 
 ## MCP Client Configuration
