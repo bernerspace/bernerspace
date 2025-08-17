@@ -9,7 +9,8 @@ import src.utils.database as database # Import the whole module
 from src.services.slack.tools import mcp as slack_mcp
 from src.services.slack.route import slack_mcp_route as slack_oauth_routes
 from src.services.slack.route import slack_oauth_callback
-from src.services.google.tools import mcp as google_mcp
+from src.services.google.gmail_tools import mcp as gmail_mcp
+from src.services.google.calender_tools import mcp as calendar_mcp
 from src.services.google.route import oauth_google_callback
 from src.utils.config_handler import is_slack_enabled, is_google_enabled
 
