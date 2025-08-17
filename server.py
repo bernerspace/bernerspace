@@ -42,8 +42,8 @@ def get_db():
 if is_google_enabled():
     print("Google integration is enabled. Setting up custom route for Google tools.")
 
-    @mcp.custom_route("/mcp/google", methods=["POST"])
-    async def handle_google_tool_call(request: Request):
+    @mcp.custom_route("/mcp/gmail", methods=["POST"])
+    async def handle_gmail_tool_call(request: Request):
         db: Session = next(get_db())
 
         # Manually extract and verify JWT
@@ -93,6 +93,58 @@ if is_google_enabled():
         result = await google_service.handle_tool_call(tool_call)
         return JSONResponse(content=result)
 
+    @mcp.custom_route("/mcp/calendar", methods=["POST"])
+    async def handle_calendar_tool_call(request: Request):
+        db: Session = next(get_db())
+
+        # Manually extract and verify JWT
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.lower().startswith("bearer "):
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "error": "Unauthorized",
+                    "message": "Bearer token missing or invalid."
+                }
+            )
+        token = auth_header.split(" ")[1]
+        try:
+            payload = pyjwt.decode(
+                token,
+                jwt_secret,
+                algorithms=["HS256"],
+                issuer="bernerspace-ecosystem", # Ensure this matches your JWT generation
+                audience="mcp-google-server" # Ensure this matches your JWT generation
+            )
+            client_id = payload.get('sub')
+            if not client_id:
+                raise ValueError("Client ID (sub) not found in JWT payload.")
+        except pyjwt.ExpiredSignatureError:
+            return JSONResponse(status_code=401, content={"error": "Unauthorized", "message": "Token has expired."})
+        except pyjwt.InvalidTokenError as e:
+            return JSONResponse(status_code=401, content={"error": "Unauthorized", "message": f"Invalid token: {e}"})
+        except ValueError as e:
+            return JSONResponse(status_code=400, content={"error": "Bad Request", "message": str(e)})
+
+        google_service = GoogleService(client_id=client_id, db_session=db)
+
+        if not await google_service.is_authenticated():
+            oauth_url = google_service.get_oauth_url()
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "error": "User not authenticated with Google.",
+                    "oauth_url": oauth_url
+                }
+            )
+
+        tool_call_data = await request.json()
+        tool_call = GoogleToolCall(**tool_call_data)
+
+        result = await google_service.handle_tool_call(tool_call)
+        return JSONResponse(content=result)
+
+    
     mcp.custom_route("/oauth/google/callback", methods=["GET"])(oauth_google_callback)
 
 
